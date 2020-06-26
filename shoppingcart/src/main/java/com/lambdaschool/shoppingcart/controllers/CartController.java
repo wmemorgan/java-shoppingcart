@@ -67,13 +67,12 @@ public class CartController
     public ResponseEntity<?> updateCart(@PathVariable long cartid,
                                         @PathVariable long productid)
     {
-        Cart dataCart = new Cart();
-        dataCart.setCartid(cartid);
+        Cart c = cartService.findCartById(cartid);
 
         Product dataProduct = new Product();
         dataProduct.setProductid(productid);
 
-        cartService.save(dataCart, dataProduct);
+        cartService.save(c, dataProduct);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -81,13 +80,12 @@ public class CartController
     public ResponseEntity<?> deleteFromCart(@PathVariable long cartid,
                                             @PathVariable long productid)
     {
-        Cart dataCart = new Cart();
-        dataCart.setCartid(cartid);
+        Cart c = cartService.findCartById(cartid);
 
         Product dataProduct = new Product();
         dataProduct.setProductid(productid);
 
-        cartService.delete(dataCart, dataProduct);
+        cartService.delete(c, dataProduct);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
