@@ -3,6 +3,7 @@ package com.lambdaschool.shoppingcart.services;
 import com.lambdaschool.shoppingcart.exceptions.ResourceFoundException;
 import com.lambdaschool.shoppingcart.exceptions.ResourceNotFoundException;
 import com.lambdaschool.shoppingcart.models.User;
+import com.lambdaschool.shoppingcart.models.UserRoles;
 import com.lambdaschool.shoppingcart.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,20 @@ public class UserServiceImpl
                 .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not found!"));
     }
 
+    @Override
+    public User findByName(String name) {
+        User uname = userrepos.findByUsername(name.toLowerCase());
+        if (uname == null) {
+            throw new ResourceNotFoundException("User name " + name + " not found!");
+        }
+        return uname;
+    }
+
+    @Override
+    public List<User> findByNameContaining(String username) {
+        return userrepos.findByUsernameContainingIgnoreCase(username);
+    }
+
     @Transactional
     @Override
     public void delete(long id)
@@ -62,7 +77,14 @@ public class UserServiceImpl
         User newUser = new User();
 
         newUser.setUsername(user.getUsername());
+        newUser.setPasswordNoEncrypt(user.getPassword());
         newUser.setComments(user.getComments());
+
+//        if (user.getUserid() == 0) {
+//            for (UserRoles ur : user.getRoles()) {
+//
+//            }
+//        }
 
         if (user.getCarts()
                 .size() > 0)
