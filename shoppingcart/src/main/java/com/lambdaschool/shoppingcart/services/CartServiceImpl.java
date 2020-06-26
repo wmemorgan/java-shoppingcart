@@ -90,7 +90,6 @@ public class CartServiceImpl
     public Cart save(Cart cart, Product product) {
 
         if (helper.isAuthorizedtoMakeChange(cart.getUser().getUsername())) {
-            System.out.println("USER " + cart.getUser().getUsername() + " is authorized!");
             Cart updateCart = cartrepos.findById(cart.getCartid())
                     .orElseThrow(() -> new ResourceNotFoundException("Cart Id " + cart.getCartid() + " not found"));
             Product updateProduct = productrepos.findById(product.getProductid())
@@ -116,21 +115,26 @@ public class CartServiceImpl
     @Transactional
     @Override
     public void delete(Cart cart, Product product) {
-        Cart updateCart = cartrepos.findById(cart.getCartid())
-                .orElseThrow(() -> new ResourceNotFoundException("Cart Id " + cart.getCartid() + " not found"));
-        Product updateProduct = productrepos.findById(product.getProductid())
-                .orElseThrow(() -> new ResourceNotFoundException("Product id " + product.getProductid() + " not found"));
 
-        if (cartrepos.checkCartItems(updateCart.getCartid(), updateProduct.getProductid())
-                .getCount() > 0)
-        {
-            cartrepos.updateCartItemsQuantity(userAuditing.getCurrentAuditor()
-                                                      .get(), updateCart.getCartid(), updateProduct.getProductid(), -1);
-            cartrepos.removeCartItemsQuantityZero();
-            cartrepos.removeCartWithNoProducts();
-        } else
-        {
-            throw new ResourceNotFoundException("Cart id " + updateCart.getCartid() + " Product id " + updateProduct.getProductid() + " combo not found");
+        if (helper.isAuthorizedtoMakeChange(cart.getUser().getUsername())) {
+            Cart updateCart = cartrepos.findById(cart.getCartid())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cart Id " + cart.getCartid() + " not found"));
+            Product updateProduct = productrepos.findById(product.getProductid())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product id " + product.getProductid() + " not found"));
+
+            if (cartrepos.checkCartItems(updateCart.getCartid(), updateProduct.getProductid())
+                    .getCount() > 0)
+            {
+                cartrepos.updateCartItemsQuantity(userAuditing.getCurrentAuditor()
+                        .get(), updateCart.getCartid(), updateProduct.getProductid(), -1);
+                cartrepos.removeCartItemsQuantityZero();
+                cartrepos.removeCartWithNoProducts();
+            } else
+            {
+                throw new ResourceNotFoundException("Cart id " + updateCart.getCartid() + " Product id " + updateProduct.getProductid() + " combo not found");
+            }
+        } else {
+            throw new ResourceNotFoundException("Not Authorized");
         }
     }
 }
