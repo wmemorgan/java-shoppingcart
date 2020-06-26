@@ -41,13 +41,6 @@ public interface UserService
     List<User> findByNameContaining(String username);
 
     /**
-     * Deletes the user record from the database based off of the provided primary key
-     *
-     * @param id id The primary key (long) of the user you seek.
-     */
-    void delete(long id);
-
-    /**
      * Given a complete user object, saves that user object in the database.
      * If a primary key is provided, the record is completely replaced
      * If no primary key is provided, one is automatically generated and the record is added to the database.
@@ -56,4 +49,40 @@ public interface UserService
      * @return the saved user object including any automatically generated fields
      */
     User save(User user);
+
+    /**
+     * Updates the provided fields in the user record referenced by the primary key.
+     * <p>
+     * Regarding Role and Useremail items, this process only allows replace those list completely. Deleting and editing those lists
+     * is done through a separate endpoint.
+     *
+     * @param user just the user fields to be updated.
+     * @param id   The primary key (long) of the user to update
+     * @return the complete user object that got updated
+     */
+    User update(User user, long id);
+
+    /**
+     * Deletes the user record from the database based off of the provided primary key
+     *
+     * @param id id The primary key (long) of the user you seek.
+     */
+    void delete(long id);
+
+    /**
+     * Adds a given user role combination
+     *
+     * @param userid The user id of the user part of this user role combination
+     * @param roleid The role id of the role part of this user role combination
+     */
+    void addUserRole(long userid, long roleid);
+
+    /**
+     * Deletes a given user role combination
+     *
+     * @param userid The user id of the user part of this user role combination
+     * @param roleid The role id of the role part of this user role combination
+     */
+    void deleteUserRole(long userid, long roleid);
+
 }
