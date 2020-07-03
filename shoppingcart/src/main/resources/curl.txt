@@ -1,0 +1,80 @@
+// barnbarns access token = 83735432-2bac-4f5a-a861-376b1bb3c89c
+// stumps access token = 6c92cda2-082a-404a-8ac0-bff3969468e8
+
+// get admins access code
+curl -X POST --user "lambda-client:lambda-secret" -d "grant_type=password&username=stumps&password=LambdaLlama" http://wme-java-shoppingcart.herokuapp.com/login
+
+// GET '/users/myinfo'
+curl -X GET -H "Accept: application/json" -H "Authorization: Bearer 6c92cda2-082a-404a-8ac0-bff3969468e8" http://wme-java-shoppingcart.herokuapp.com/users/myinfo
+
+// Results
+{
+  "userid": 3,
+  "username": "stumps",
+  "comments": "",
+  "roles": [
+    {
+      "role": {
+        "roleid": 2,
+        "name": "USER"
+      }
+    }
+  ],
+  "carts": [
+    {
+      "cartid": 3,
+      "products": [
+        {
+          "product": {
+            "productid": 3,
+            "name": "COFFEE",
+            "price": 4.0,
+            "description": "EVERYONE NEEDS COFFEE",
+            "comments": ""
+          },
+          "quantity": 17,
+          "comments": ""
+        }
+      ]
+    }
+  ]
+}
+
+
+
+
+// GET '/carts/user'
+curl -X GET -H "Accept: application/json" -H "Authorization: Bearer 83735432-2bac-4f5a-a861-376b1bb3c89c" http://wme-java-shoppingcart.herokuapp.com/users/myinfo
+
+// Results
+[
+  {
+    "cartid": 3,
+    "products": [
+      {
+        "product": {
+          "productid": 3,
+          "name": "COFFEE",
+          "price": 4.0,
+          "description": "EVERYONE NEEDS COFFEE",
+          "comments": ""
+        },
+        "quantity": 17,
+        "comments": ""
+      }
+    ],
+    "user": {
+      "userid": 3,
+      "username": "stumps",
+      "comments": "",
+      "roles": [
+        {
+          "role": {
+            "roleid": 2,
+            "name": "USER"
+          }
+        }
+      ]
+    }
+  }
+]
