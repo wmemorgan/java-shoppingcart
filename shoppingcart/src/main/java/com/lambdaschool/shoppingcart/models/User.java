@@ -120,6 +120,10 @@ public class User
 
     public List<SimpleGrantedAuthority> getAuthority() {
         List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
+        for (UserRoles r: this.roles) {
+            String myString = "ROLE_" + r.getRole().getName().toUpperCase();
+            rtnList.add(new SimpleGrantedAuthority(myString));
+        }
 
         return rtnList;
     }
