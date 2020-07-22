@@ -1,6 +1,9 @@
 package com.lambdaschool.shoppingcart.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,7 +29,15 @@ public class User
             unique = true)
     private String username;
 
+    @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
     private String comments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties(value = "user", allowSetters = true)
+    private List<UserRoles> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL)
@@ -37,6 +48,13 @@ public class User
     public User()
     {
 
+    }
+
+    public User(long userid, String username, String password, String comments) {
+        this.userid = userid;
+        this.username = username;
+        this.password = password;
+        this.comments = comments;
     }
 
     public long getUserid()
@@ -59,6 +77,19 @@ public class User
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
+    }
+
+    public void setPasswordNoEncrypt(String password) {
+        this.password = password;
+    }
+
     public String getComments()
     {
         return comments;
@@ -69,6 +100,14 @@ public class User
         this.comments = comments;
     }
 
+    public List<UserRoles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<UserRoles> roles) {
+        this.roles = roles;
+    }
+
     public List<Cart> getCarts()
     {
         return carts;
@@ -77,5 +116,11 @@ public class User
     public void setCarts(List<Cart> carts)
     {
         this.carts = carts;
+    }
+
+    public List<SimpleGrantedAuthority> getAuthority() {
+        List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
+
+        return rtnList;
     }
 }
