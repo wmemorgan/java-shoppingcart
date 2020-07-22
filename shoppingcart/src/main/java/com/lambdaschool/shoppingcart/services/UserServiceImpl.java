@@ -2,7 +2,9 @@ package com.lambdaschool.shoppingcart.services;
 
 import com.lambdaschool.shoppingcart.exceptions.ResourceFoundException;
 import com.lambdaschool.shoppingcart.exceptions.ResourceNotFoundException;
+import com.lambdaschool.shoppingcart.models.Role;
 import com.lambdaschool.shoppingcart.models.User;
+import com.lambdaschool.shoppingcart.models.UserRoles;
 import com.lambdaschool.shoppingcart.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,17 @@ public class UserServiceImpl
      * Connects this service to the users repository
      */
     @Autowired
-    private UserRepository userrepos;
+    private UserRepository userRepository;
 
+    /**
+     * Connects this service to the Role table
+     */
+    @Autowired
+    private RoleService roleService;
+
+    /**
+     * Connects this service to the Cart table
+     */
     @Autowired
     private CartService cartService;
 
@@ -33,7 +44,7 @@ public class UserServiceImpl
          * findAll returns an iterator set.
          * iterate over the iterator set and add each element to an array list.
          */
-        userrepos.findAll()
+        userRepository.findAll()
                 .iterator()
                 .forEachRemaining(list::add);
         return list;
@@ -42,14 +53,14 @@ public class UserServiceImpl
     @Override
     public User findUserById(long id)
     {
-        return userrepos.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not found!"));
     }
 
     @Override
     public User findByName(String name) {
 
-        User user = userrepos.findByUsername(name.toLowerCase());
+        User user = userRepository.findByUsername(name.toLowerCase());
 
         if (user == null) {
             throw new ResourceNotFoundException("Username " + name + " not found");
@@ -62,9 +73,9 @@ public class UserServiceImpl
     @Override
     public void delete(long id)
     {
-        userrepos.findById(id)
+        userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not found!"));
-        userrepos.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     @Transactional
@@ -73,14 +84,34 @@ public class UserServiceImpl
     {
         User newUser = new User();
 
+        if (user.getUserid() != 0) {
+            User oldUser = userRepository.findById(user.getUserid())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "User id " + user.getUserid() + " not found"));
+            newUser.setUserid(user.getUserid());
+        }
+
         newUser.setUsername(user.getUsername());
+        newUser.setPasswordNoEncrypt(user.getPassword());
         newUser.setComments(user.getComments());
+
+        newUser.getRoles()
+                .clear();
+        for (UserRoles ur : user.getRoles())
+        {
+            Role addRole = roleService.findRoleById(ur.getRole()
+                    .getRoleid());
+
+            newUser.getRoles()
+                    .add(new UserRoles(newUser, addRole));
+        }
+
 
         if (user.getCarts()
                 .size() > 0)
         {
             throw new ResourceFoundException("Carts are not added through users");
         }
-        return userrepos.save(newUser);
+        return userRepository.save(newUser);
     }
 }
