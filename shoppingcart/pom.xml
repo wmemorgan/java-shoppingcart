@@ -12,7 +12,7 @@
     <artifactId>shoppingcart</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>shoppingcart</name>
-    <description>Demo project for Spring Boot</description>
+    <description>User Security Project</description>
 
     <properties>
         <java.version>11</java.version>
@@ -56,6 +56,25 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Security Dependencies Start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>2.3.6.RELEASE</version>
+        </dependency>
+        <!-- Security Dependencies End -->
 
         <!-- https://mvnrepository.com/artifact/com.github.javafaker/javafaker -->
         <dependency>
